@@ -1,3 +1,14 @@
+<?php
+
+define('ROOT', dirname(__FILE__));
+require_once(ROOT . '/components/Autoload.php');
+
+$repository = new RatingRepository(DB::getConnection());
+
+$ratings = $repository->getAllRatings();
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,68 +23,31 @@
     <meta charset="utf-8">
 </head>
 <body>
-<?php
-$hostname = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbName = "students";
-
-/* Таблица MySQL, в которой хранятся данные */
-$userstable = "top";
-
-/* создать соединение */
-MYSQL_CONNECT($hostname,$username,$password) OR DIE("Can't connect ");
-
-@mysql_select_db("$dbName") or die("Can't chose db ");
-
-/* Выбрать всех */
-$query = "SELECT * FROM `top` WHERE 1";
-
-$result = MYSQL_QUERY($query);
-
-$i = 0;
-
-$number = MYSQL_NUMROWS($result);
-
-
-WHILE ($i < $number){
-    $name[$i] = mysql_result($result,$i,"student");
-    $points[$i] = mysql_result($result,$i,"points");
-    $i++;
-}
-
-PRINT "<div class=\"row\">
-    <div class=\"col s12 m6\">
-        <div class=\"card blue-grey darken-1\">
-            <div class=\"card-content white-text\">
+<div class="row">
+    <div class="col s12 m6">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
                 <table>
                     <thead>
                     <tr>
-                        <th data-field=\"name\">Имя</th>
-                        <th data-field=\"balls\" class=\"right-sided\">Баллы</th>
+                        <th data-field="name">Имя</th>
+                        <th data-field="balls" class="right-sided">Баллы</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td>$name[0]</td>
-                        <td class=\"right-sided\">$points[0]</td>
-                    </tr>
-                    <tr>
-                        <td>$name[1]</td>
-                        <td class=\"right-sided\">$points[1]</td>
-                    </tr>
-                    <tr>
-                        <td>$name[2]</td>
-                        <td class=\"right-sided\">$points[2]</td>
-                    </tr>
+                    <?php foreach ($ratings as $studentRating): ?>
+                        <tr>
+                            <td><?php echo $studentRating->getName(); ?></td>
+                            <td class="right-sided"><?php echo $studentRating->getPoints(); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-</div> "
-?>
+</div>
 
 <div class="clock-wrap">
     <div class="row">
